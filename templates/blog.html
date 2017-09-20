@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Read my blog and keep learning Django 1.9{% endblock %}
+{% block stylesheet %}
+
+<style>
+	.article {
+    margin-bottom: 40px;
+}
+.mdl-card__subtitle {
+    padding-left: 16px;
+}
+</style>
+{% endblock %}
+{% block content %}
+    
+    {% for obj in post %}
+
+    <!-- Wide card with share menu button -->
+    <div class="article mdl-shadow--4dp">
+      <div class="mdl-card__title">
+        <h2 class="mdl-card__title-text"><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></h2>
+      </div>
+      <div class="mdl-card__subtitle">
+      	<p class="mdl-card__subtitle-text"><strong>Published on: </strong>{{ obj.timestamp|timesince }} ago <strong>Update on: </strong>{{ obj.update|timesince }} ago</p>
+      </div>
+      <div class="mdl-card__supporting-text">
+        <p class="text-justify">{{ obj.content|slice:"0:500" }}</p>
+      </div>
+      <div class="mdl-card__actions mdl-card--border">
+        <a href="{{ obj.get_absolute_url }}" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Read full story<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" data-upgraded=",MaterialButton,MaterialRipple"><i class="material-icons" role="presentation">arrow_forward</i></button></a>
+      </div>
+    </div>
+
+        
+        
+    {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if post.has_previous %}
+                <a href="?page={{ post.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ post.number }} of {{ post.paginator.num_pages }}.
+            </span>
+
+            {% if post.has_next %}
+                <a href="?page={{ post.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}

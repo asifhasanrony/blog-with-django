@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Create a new post{% endblock %}
+{% block stylesheet %}{% endblock %}
+{% block content %}
+<div class="card">
+  <h4 class="card-header">{{ header }}</h4>
+  <div class="card-body">
+    {% if messages %}
+	  <div class="messages">
+	    {% for message in messages %}
+	      <h3 class="{{ message.tags }} text-center">{{ message }}</h3>
+	    {% endfor %}
+	  </div>
+	{% endif %}
+    <form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+   {{ form.as_p }}
+    <input type="submit" value="Create post">
+    </form>
+  </div>
+</div>
+{% endblock %}

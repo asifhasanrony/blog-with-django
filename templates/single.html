@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block stylesheet %}
+{% if post.id == 1 %}
+<style>
+  .mdl-card__actions.mdl-card--border {
+    padding-bottom: 38px;
+}
+</style>
+{% endif %}
+<style>
+.single-comment {
+    box-sizing: border-box;
+    box-shadow: 0px 0px 1px #928383;
+    padding: 0px 15px;
+}
+img.image-responsive {
+    max-height: 200px;
+    max-height: 320px!important;
+    vertical-align: middle;
+    align-content: right!important;
+    align-self: center!important;
+}
+</style>
+{% endblock %}
+{% block content %}
+<!-- Wide card with share menu button -->
+{% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <h3 class="{{ message.tags }} alert-dismissible fade show" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          {{ message }}
+      </h3>
+    {% endfor %}
+  </div>
+{% endif %}
+<div class="row">
+       <div class="col col-12 col-lg-8 col-md-8 col-sm-12">
+    <div class="mdl-shadow--2dp">
+      <div class="row">
+      <div class="col col-11">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">{{ post.title }}</h2>{{ post.author.username }}
+        </div>
+      </div>
+      <div class="col col-1">
+        <span>
+          <!-- Right aligned menu below button -->
+          <button id="demo-menu-lower-right"
+                  class="mdl-button mdl-js-button mdl-button--icon">
+            <i class="material-icons">more_vert</i>
+          </button>
+          
+          <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+              for="demo-menu-lower-right">
+            <li class="mdl-menu__item"><a href="{% url 'blog_update' id=post.id %}">Edit</a></li>
+            <li class="mdl-menu__item"><a href="{% url 'blog_delete' %}">Delete</a></li>
+          </ul>
+        </span>
+      </div>
+    </div>
+
+      <div class="mdl-card__subtitle">
+        <p class="mdl-card__subtitle-text">Published on: {{ post.timestamp|timesince }} ago Update on: {{ post.update|timesince }} ago</p>
+      </div>
+{#        <img src="{{ post.image.url }}" alt="" class="image-responsive">#}
+      <div class="mdl-card__supporting-text">
+        <p class="text-justify">{{ post.content }}</p>
+      </div>
+      <div class="mdl-card__actions mdl-card--border">
+        {% if post.id > 1 %}
+          <a href="{% url 'blog_details' id=post.id|add:'-1' %}" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"><button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" data-upgraded=",MaterialButton,MaterialRipple"><i class="material-icons" role="presentation">arrow_backward</i></button>Prevous Post</a>
+        {% endif %}
+        
+        {% if post.id < last_post.id %}
+          <a href="{% url 'blog_details' id=post.id|add:'1' %}" class="float float-right mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Next Post<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" data-upgraded=",MaterialButton,MaterialRipple"><i class="material-icons" role="presentation">arrow_forward</i></button></a>
+        {% endif %}
+        
+      </div>
+
+    </div>
+       <div class="comments">
+       <h2 class="alert alert-success">Comments</h2>
+            {% for cm in comment %}
+                <div class="single-comment">
+                    <h4><a href="">{{ cm.name }}</a><small>  {{ cm.time }}</small></h4>
+                    <p>{{ cm.comment }}</p>
+                </div>
+            {% endfor %}
+       </div>
+       <div class="comment-form">
+
+
+           <div class="card">
+  <div class="card-header">
+    Give a reply
+  </div>
+  <div class="card-body">
+
+           <form action="{% url 'blog_details' id=post.id %}" method="post">
+               {% csrf_token %}
+{#               {{ form.as_p }}#}
+              <div class="row">
+                  <div class="col col-xs-12">
+                      <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" name="name" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Enter name">
+                      </div>
+                  </div>
+                  <div class="col col-xs-12">
+                      <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Enter email">
+                      </div>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                <label for="comment">Comment</label>
+                  <textarea name="comment" class="form-control" id="comment" placeholder="Enter comment"></textarea>
+              </div>
+               <input name="post" type="hidden" value="{{ post.id }}">
+
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+  </div>
+</div>
+
+
+       </div>
+       </div>
+       <div class="col col-12 col-lg-4 col-md-4 col-sm-12">
+           <div class="list-group">
+          <div class="list-group-item active">
+            <h4>Related articles</h4>
+          </div>
+          {% for i in all_post %}
+          {% if i.id <= 7 %}
+              <a href="{% url 'blog_details' id=i.id %}" class="list-group-item list-group-item-action">{{ i.title }}</a>
+          {% endif %}
+          
+          {% endfor %}
+        </div>
+       </div>
+   </div>
+
+
+{% endblock %}
